@@ -1,3 +1,14 @@
+# muda autenticação do git
+$ git remote set-url origin git@github.com:user/repo.git
+$ git config --global user.name "wellington"
+$ git config --global user.email "wellington281482@gmail.com"
+$ git config --global core.editor vim
+$ git global --list
+git init
+
+$ git -a -m "Criado arquivo .yaml"
+
+
 # Cria a imagem usando o Dockerfile
 docker build -t mysql .
 
