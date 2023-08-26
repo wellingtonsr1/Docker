@@ -1,0 +1,113 @@
+# Cria a imagem usando o Dockerfile
+docker build -t mysql .
+
+# Cria o container usando a imagem criada pelo Dockerfile
+docker container run --name db-mysql -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 mysql
+
+# Importa o banco para o mysql no container
+$ mysql -h 127.0.0.1 -P 3306 -u root -p listaDeRamais < listagemDeRamais.sql
+
+
+# https://johnfercher.medium.com/mysql-docker-7ff6d50d6cf1
+#Dockerfile
+FROM mysql:latest
+WORKDIR /db-mysql
+COPY listagemDeRamais.sql ./
+EXPOSE 3306
+
+#Dockerfile
+# Derivando da imagem oficial do MySQL
+FROM mysql:5.7
+# Adicionando os scripts SQL para serem executados na criação do banco
+COPY ./db/ /docker-entrypoint-initdb.d/
+RUN chown -R mysql:mysql /docker-entrypoint-initdb.d/
+EXPOSE 3306
+
+# Cria a imagem usando o Dockerfile
+$ docker build -t backoffice-db .
+
+# Cria o container usando a imagem criada pelo Dockerfile
+$ docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=RootPassword -e MYSQL_DATABASE=Backoffice -e MYSQL_USER=MainUser -e MYSQL_PASSWORD=MainPassword backoffice-db
+
+ou
+
+# Se as variáveis de ambientes estiverem sido definidas no Dockerfile
+$ docker run -d -p 3306:3306 backoffice-db
+
+# Acessar o banco de dados
+$ docker exec -it container_id bash
+root@container_id:/# mysql -uroot -p
+Enter password: RootPassword
+
+
+---------------------------------------------------------------------------------------------------------
+https://github.com/KubeDev/desafio-imersao-devops-cloud-02
+
+# docker container ls
+# docker container ls -a
+# docker conatiner rm -f ID_CONTAINER
+
+# docker image ls
+# docker image ls -a
+# docker image rm -f ID_IMAGE
+
+#cria a imagem com a aplicação
+# wellingtonsr1/desafio-imersao-devops-cloud-02:v1
+docker build -t wellingtonsr1/desafio-imersao-devops-cloud-02:v1 .
+docker tag wellingtonsr1/desafio-imersao-devops-cloud-02:v1 wellingtonsr1/desafio-imersao-devops-cloud-02:latest
+
+# cria rede para os conateiners
+docker network create app-mongodb
+
+#cria o volume
+docker volume create app-mongodb
+
+# cria o container do banco com base no mongo
+docker container run -d -p 21017:21017 -e MONGO_INITDB_ROOT_USERNAME=mongouser -e MONGO_INITDB_ROOT_PASSWORD=mongopwd --network app-mongodb --name mongodb -v app-mongodb:/data/db mongo
+
+# cria o container da aplicação
+docker container run -d -p 5000:5000 -e MONGODB_PASSWORD=mongopwd -e MONGODB_HOST=mongodb -e MONGODB_USERNAME=mongouser --network app-mongodb wellingtonsr1/desafio-imersao-devops-cloud-02:v1
+
+# enviar a imagem para o docker hub
+docker login
+docker push NOME_IMAGEM:TAG
+
+
+
+# docker composer
+version: '3.8'
+
+volumes:
+  app-mongodb:
+
+networks:
+  app-mongodb:
+    driver: bridge
+
+services:
+  mongodb:
+    image: mongo
+    ports:
+    - 21017:21017
+    networks:
+    - app-mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongouser
+      MONGO_INITDB_ROOT_PASSWORD: mongopwd
+
+
+  desafio-imersao-devops-cloud-02:
+    image: wellingtonsr1/desafio-imersao-devops-cloud-02:v1
+    networks:
+      - app-mongodb
+    ports:
+    - 5000:5000
+    environment:
+      MONGODB_HOST: mongodb
+      MONGODB_USERNAME: mongouser 
+      MONGODB_PASSWORD: mongopwd
+
+
+
+
+
