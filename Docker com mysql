@@ -85,6 +85,9 @@ docker network create app-mongodb
 #cria o volume
 docker volume create app-mongodb
 
+#onde ficam os volumes criados
+/var/lib/docker/volumes/
+
 # cria o container do banco com base no mongo
 docker container run -d -p 21017:21017 -e MONGO_INITDB_ROOT_USERNAME=mongouser -e MONGO_INITDB_ROOT_PASSWORD=mongopwd --network app-mongodb --name mongodb -v app-mongodb:/data/db mongo
 
