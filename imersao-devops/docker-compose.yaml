@@ -1,0 +1,34 @@
+version: '3.8'
+
+volumes:
+  app-mongo:
+
+networks:
+  app-mongodb:
+    driver: bridge
+
+services:
+  mongodb:
+    image: mongo
+    ports:
+    - 21017:21017
+    networks:
+    - app-mongodb
+    volumes:
+    - app-mongo:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongouser
+      MONGO_INITDB_ROOT_PASSWORD: mongopwd
+
+
+  desafio-imersao-devops-cloud-02:
+    image: wellingtonsr1/desafio-imersao-devops-cloud-02:v2
+    networks:
+    - app-mongodb
+    ports:
+    - 5000:5000
+    environment:
+      MONGODB_HOST: mongodb
+      MONGODB_USERNAME: mongouser 
+      MONGODB_PASSWORD: mongopwd
+
