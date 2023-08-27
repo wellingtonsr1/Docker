@@ -1,3 +1,5 @@
+#Git
+
 # muda autenticação do git
 $ git remote set-url origin git@github.com:user/repo.git
 $ git config --global user.name "wellington"
@@ -7,6 +9,16 @@ $ git global --list
 git init
 
 $ git -a -m "Criado arquivo .yaml"
+
+
+
+# Crie um arquivo .gitignore para seu repositório.
+touch .gitignore
+
+# Cancelar o rastreamento do arquivo antes de adicionar uma regra para ignorá-lo. No seu terminal, deixe de rastrear o arquivo.
+git rm --cached FILENAME
+
+#-------------------------------------------------------------------------------------------------------------------------------------
 
 
 # Cria a imagem usando o Dockerfile
