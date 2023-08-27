@@ -10,6 +10,5 @@ ENV MYSQL_ROOT_PASSWORD=RootPassword
 ENV MYSQL_DATABASE=listagemDeRamais
 ENV MYSQL_USER=MainUser
 ENV MYSQL_PASSWORD=MainPassword
-
 # expõe a porta 3306
 EXPOSE 3306
