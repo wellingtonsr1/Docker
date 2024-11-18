@@ -1,0 +1,90 @@
+-----------------------------------------------------------
+    Prepraração do Ubuntu para instalação do novosga 1.5
+-----------------------------------------------------------
+
+* Novo SGA em Docker - Sistema de Gerenciamento de Atendimento (BD Externo) *
+
+*** Alguns ajustes podem ser necessários. ***
+
+
+Parte 1
+-------
+
+1. Instalar o Ubuntu 18.04 LTS (bionic)
+
+2. Instalar o mysql (innodb 5.6.49-89.0  10.1.48-MariaDB)
+# apt-get install mysql-server
+
+2.1 Logar no mysql para criar o banco do sga 
+# mysql -u root -p
+> create database novosga;
+> create user 'novosga'@'%' identified by 'sga123';
+> grant all privileges on novosga.* to 'novosga'@'%' identified by 'sga123';
+> exit
+    
+# service mysql restart
+
+3. Instalar o PHP 5.3.29
+# apt-get install php5 php5-mcrypt
+    
+4. Instalar o apache2 
+# apt-get install apache2
+# nano /etc/apache2/sites-available/000-default.conf
+
+4.1 Inserir no final do arquivo
+
+<Directory "/var/www/">
+	AllowOverride All
+        Require all granted
+</Directory>
+
+4.2 Reiniciar o apache2
+$ sudo service apache2 restart
+
+5. Permissões
+# chown -R www-data:www-data /var/www/html/novosga/
+
+6. Instalar o curl
+# apt-get install curl
+
+
+Parte 2
+-------
+
+7. Passos para instalar o novosga usando o docker
+
+7.1 Faça o download dos arquivos no seu servidor Docker.
+Link para o downlçoad: https://github.com/joserf/sga
+
+7.2 Edite as linhas 8, 9, 10, 11, 12 do Dockerfile, adicionando suas credenciais do banco de dados externo.
+
+7.3 No seu servidor de banco de dados externo, importe o banco de dados "novosga.sql"
+
+Dica: grant all privileges on novosga.* to novosga@localhost identified by 'sga123';
+GRANT ALL ON novosga.* TO 'novosga'@'IP-SERVIDOR-DOCKER' IDENTIFIED BY 'sga123' WITH GRANT OPTION;
+flush privileges;
+
+7.4 Faça o build. 
+
+# docker build -t novosga .
+
+7.5 Execute o container.
+
+# docker run --name Novo-Sga -p 8080:80 -d novosga
+
+7.6 Acessando a aplicação.
+
+http://IP-SERVIDOR-DOCKER:8080 (Login: admin | Senha: sga123)
+
+Acessando o painel web.
+
+http://IP-SERVIDOR-DOCKER:8080/painel-web
+
+Acessando a triagem touch.
+
+http://IP-SERVIDOR-DOCKER:8080/triagem-touch
+
+
+
+Fonte: https://github.com/joserf/sga
+       Curso: Novo SGA: Sistema de Gerenciamento de Atendimento (Aula: Instalando o Novo SGA), https://www.udemy.com/

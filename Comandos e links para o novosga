@@ -1,0 +1,27 @@
+
+
+https://depot.dev/blog/docker-clear-cache
+https://github.com/wellingtonsr1/PainelTVNovoSGA1.5/tree/main
+https://gist.github.com/rhuandevops/fe72dc889ca5f8d9b67daf1d2d627be2
+https://github.com/joserf/sga
+
+scp -P 22 sga-master/ wellington@192.168.0.8:~ (Tranferir do remoto pro host)
+docker build -t novosga .
+docker exec -it 6c55f02b4723 sh
+docker run --name Novo-Sga -p 8080:80 -d novosga
+
+processQueue: function() {
+            if (this.playing && this.queue.length === 0) {
+                this.playing = false;
+                PainelWeb.trigger('callend');
+                return;
+            }
+            var current = this.queue.shift();
+            //console.log(current.name);
+            if (current) {
+                this.playing = true;
+                var filename = "media/voice/" + current.lang + "/" + current.name;
+                this.playFile(filename);
+            }
+        }
+
